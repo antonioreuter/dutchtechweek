@@ -49,6 +49,10 @@ appEventEmitter.on(GAME_OVER, (data) => {
     lampHue.colorLoop(1);
 });
 
+appEventEmitter.on(GAME_STOPPED, () => {
+    // TODO
+});
+
 
 appEventEmitter.on(CHANGE_DATA_EVENT, (data) => {
     console.log(`Updating the screen with the latest data: ${JSON.stringify(data)}`);
