@@ -2,8 +2,107 @@
     <head>
         <meta charset="utf-8">
         <title>Philips Dutch Tech Week</title>
+        <script>window.$ = window.jQuery = require('jquery');</script>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+            crossorigin="anonymous">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+            crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+            crossorigin="anonymous"></script>
     </head>
+        
     <body>
-        <h1>Heartbeat sensor...</h1>
+        <div class="container-fluid">
+            <div class="row">
+                <div id="successAlert" class="alert alert-success collapse" role="alert"></div>
+            </div>
+            <div class="row border border-dark">
+                <div class="col-sm border border-dark">
+                    <h1 class="display-3">Player 1</h1>
+                    <div id="bpmPlayer1">
+                        <h1>0 bpm</h1>
+                    </div>
+                    <div id="spo2Player1">
+                        <h1>0%</h1>
+                    </div>
+                </div>
+                <div class="col-sm">
+                    <h5>0</h5>
+                </div>
+                <div class="col-sm border border-dark">
+                    <h1 class="display-3">Player 2</h1>
+                    <div id="bpmPlayer2">
+                        <h1>0 bpm</h1>
+                    </div>
+                    <div id="spo2Player2">
+                        <h1>0%</h1>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row">
+            
+                <div class="mx-auto" style="width: 200px;">
+                    <span id="chronometer" style="font-size:2rem;" class="badge badge-pill badge-warning">00:00:00</span>
+                </div>
+            
+            
+            </div>
+            
+            <div class="row">
+                <button id="startButton" type="button" value="Start" class="btn btn-success btn-lg btn-block" onclick="startNewGame()">Start Game</button>
+                <button id="stopButton" type="button" value="Stop" class="btn btn-secondary btn-lg btn-block" style="display: none" onclick="stopGame()">Stop Game</button>
+            </div>
+        </div>
+
+
+        <script>
+            
+            const electron = require('electron');
+            const { ipcRenderer } = electron;
+            const EasyTimer = require('easytimer.js');
+            let timer = new EasyTimer();
+
+            $('#successAlert').on("game.finished", () => {
+                $('#successAlert').text("The game is finished!!!");
+            });
+
+            function startNewGame() {
+                console.log("Starting a new game....");
+                $("#startButton").hide();
+                $("#stopButton").show();
+                $('#successAlert').hide();
+                startChronometer();
+            }
+
+            function startChronometer() {
+                console.log('starting the chronometer...');
+                timer.reset();
+                timer.start({ precision: 'seconds' });
+                timer.addEventListener('secondsUpdated', function (e) {
+                    $('#chronometer').html(timer.getTimeValues().toString());
+                });
+            }
+
+            function stopChronometer() {
+                console.log('stoping the chronometer...');
+                timer.stop();
+            }
+
+            function stopGame() {
+                console.log("Stoping the game...");
+                $('#successAlert').text("The game was interrupted!!!");
+                $('#successAlert').show();
+
+                $('#startButton').show();
+                $('#stopButton').hide();
+
+                stopChronometer();
+            }
+
+        </script>
+
+
+       
     </body>
 </html>
