@@ -1,9 +1,11 @@
-const { appEventEmitter, CHANGE_DATA_EVENT, CHANGE_DATA_SCREEN_EVENT, CHANGE_DATA_LAMPS_EVENT } = require('./appEventEmitter');
+const { appEventEmitter, CHANGE_DATA_EVENT } = require('./appEventEmitter');
+const lightUtils = require('./lightUtils');
 const config = require('./config.json');
 
 class Interpreter {
   constructor() {
     this.data = new Map();
+    this.initialHeartbeat = 0;
   }
 
   addRecords(records) {
@@ -14,22 +16,32 @@ class Interpreter {
     const currentSize = this.data.size;
     if (oldSize !== currentSize) {
       const playerPayload = this.computePlayers();
-      const screenPayload = playerPayload.map(x => ({
+      const payload = playerPayload.map(x => ({
         playerID: x.playerID,
+        lightBulbID: this.findLightBulbID(x.playerID),
+        color: lightUtils.calculateHueColorNumber(this.initialHeartbeat, x.data.bpm),
         data: {
           bpm: `${x.data.bpm} bpm`,
           spo2: `${x.data.spo2}%`
         }
       }));
-      const lightPayload = playerPayload.map(x => ({
-        playerID: x.playerID,
-        lightBulbID: '',
-        data: x.data
-      }));
-      appEventEmitter.emit(CHANGE_DATA_EVENT, Array.from(this.data.values()));
-      appEventEmitter.emit(CHANGE_DATA_SCREEN_EVENT, screenPayload);
-      appEventEmitter.emit(CHANGE_DATA_LAMPS_EVENT, lightPayload);
+      appEventEmitter.emit(CHANGE_DATA_EVENT, payload);
     }
+  }
+
+  computeInitialHearbeat() {
+    this.initialHeartbeat = 0;
+    this.data.clear();
+  }
+
+  findLightBulbID(playerID) {
+    for (let i = 0; i < config.players.length; i++) {
+      let item = config.players[i];
+      if (item.playerID === playerID) {
+        return item.lightBulbID;
+      }
+    }
+    return -1;
   }
 
   computePlayers() {

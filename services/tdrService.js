@@ -7,6 +7,7 @@ const interpreter = require('../interpreter');
 class TDRService extends Service {
   constructor(config) {
     super(config);
+    this.lastQueryTimestamp = moment();
   }
 
   queryTDR(token) {
@@ -16,7 +17,8 @@ class TDRService extends Service {
       url: `${this.config.url}/DataItem`,
       qs: { 
         organization: this.config.organization,
-        dataType: this.config.datatype
+        dataType: this.config.datatype,
+        timestamp: `gt${this.lastQueryTimestamp.toISOString()}`
       },
       headers: { 
         'cache-control': 'no-cache',
@@ -25,6 +27,7 @@ class TDRService extends Service {
         'api-version': '3' 
       }
     };
+    this.lastQueryTimestamp = moment();
 
     return new Promise((resolve, reject) => {
       request(options, (error, response, body) => {
@@ -57,6 +60,7 @@ class TDRService extends Service {
           data: x.data.data
         }));
         interpreter.addRecords(transformedResources);
+        console.log(transformedResources);
         return Promise.resolve();
       })
       .catch((error) => {
