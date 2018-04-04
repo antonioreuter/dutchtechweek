@@ -1,0 +1,16 @@
+.row {
+  margin-top: 20px;
+  margin-bottom: 20px
+}
+
+.app {
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+.counter {
+    display: flex;
+    flex: 1 0 50%;
+    align-items: center;
+    justify-content: center;
+}

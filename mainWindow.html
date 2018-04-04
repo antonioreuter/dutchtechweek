@@ -3,10 +3,9 @@
         <meta charset="utf-8">
         <title>Philips Dutch Tech Week</title>
         <script>window.$ = window.jQuery = require('jquery');</script>
-        <script src="http://cdnjs.cloudflare.com/ajax/libs/waypoints/2.0.3/waypoints.min.js"></script>
-        <script src="jquery.counterup.min.js"></script>
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
             crossorigin="anonymous">
+        <link rel="stylesheet" href="./css/style.css">
         <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
             crossorigin="anonymous"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
@@ -14,33 +13,41 @@
     </head>
         
     <body>
-        <div class="container-fluid">
+        <div class="container-fluid app">
             <div class="row">
                 <div class="col-sm-12">
                     <div id="successAlert" class="alert alert-success collapse" role="alert"></div>
                 </div>
-                
             </div>
             <div class="row">
+                <div class="col-sm-1"></div>
                 <div id="player1" class="col-sm-4 border border-dark">
                     <h1 class="display-3">Player 1</h1>
                     <div id="bpmPlayer1">
-                        <span id="p1Bpm">0 bpm</span>
+                        <span style="font-size: 2em; color:crimson;">
+                            <span id="p1Bpm" style="font-size: 6em;">0</span> bpm
+                        </span>
                     </div>
                     <div id="spo2Player1">
-                        <span id="p1Spo2">0%</span>
+                        <span style="font-size: 1em; color:mediumblue;">
+                            <span id="p1Spo2" style="font-size: 3em;">0%</span> spo2
+                        </span>
                     </div>
                 </div>
-                <div class="col-sm-4">
-                    <span id="counter">0</span>
+                <div class="col-sm-2 counter">
+                    <span id="counter" class="align-middle" style="font-size: 3em; color:darkred;"></span>
                 </div>
                 <div id="player2" class="col-sm-4 border border-dark">
                     <h1 class="display-3">Player 2</h1>
                     <div id="bpmPlayer2">
-                        <span id="p2Bpm" >0 bpm</span>
+                        <span style="font-size: 2em; color:crimson;">
+                            <span id="p2Bpm" style="font-size: 6em;">0</span> bpm
+                        </span>
                     </div>
                     <div id="spo2Player2">
-                        <span id="p2Spo2">0%</span>
+                        <span style="font-size: 1em; color:mediumblue;">
+                            <span id="p2Spo2" style="font-size: 3em;" >0%</span> spo2
+                        </span>
                     </div>
                 </div>
             </div>
@@ -52,10 +59,12 @@
             </div>
             
             <div class="row">
+                <div class="col-sm-1"></div>
                 <div class="col-sm-10 ">
                     <button id="startButton" type="button" value="Start" class="btn btn-success btn-lg btn-block" onclick="startNewGame()">Start Game</button>
                     <button id="stopButton" type="button" value="Stop" class="btn btn-secondary btn-lg btn-block" style="display: none" onclick="stopGame()">Stop Game</button>
                 </div>
+                <div class="col-sm-1"></div>
             </div>
         </div>
 
@@ -73,7 +82,7 @@
                 $('#successAlert').hide();
 
                 players.forEach((player) => {
-                    $('#' + player + 'Bpm').text("0 bpm");
+                    $('#' + player + 'Bpm').text("0");
                     $('#' + player + 'Spo2').text("0%");
                 });
 
