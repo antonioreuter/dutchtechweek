@@ -27,31 +27,48 @@ app.on('ready', () => {
     });
 });
 
-ipcMain.on('start:game', (event, val) => {
+ipcMain.on('game:start', (event, val) => {
     console.log('Sending message to START the game...');
     lampHue.resetLamps();
     control.start();
 });
 
-ipcMain.on('stop:game', (event, val) => {
+ipcMain.on('game:stop', (event, val) => {
     console.log('Sending message to STOP the game...');
-    lampHue.colorLoop(1);
+    lampHue.resetLamps();
     control.stop();
 });
 
 
+appEventEmitter.on('game:over', (data) => {
+    console.log('Game over');
 
-appEventEmitter.on('xxxx', (data) => {
+    mainWindow.webContents.send('game:over', { winner: 'player 1'});
+
+    lampHue.resetLamps();
+    lampHue.colorLoop(1);
+});
+
+
+appEventEmitter.on('update:data', (data) => {
     console.log(`Updating the screen with the latest data: ${JSON.stringify(data)}`);
 
     if (data !== undefined) {
         mainWindow.webContents.send('screen:update', data);
 
-        data.array.forEach(element => {
+        data.forEach(element => {
             lampHue.emitPlayerLampSignal(element.lightBulbID, element.color);
         });
     }
 });
 
+appEventEmitter.on('countdown', (data) => {
+    console.log(`Counting down... ${data}`);
+    if (data !== undefined) {
+        data.count = (data.count !== 0) ? data : 'ready';
 
+        mainWindow.webContents.send('screen:countdown', data.count);
 
+        lampHue.emitSignalLampSignal(data.bright);
+    }
+});

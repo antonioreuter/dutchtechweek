@@ -16,10 +16,13 @@
     <body>
         <div class="container-fluid">
             <div class="row">
-                <div id="successAlert" class="alert alert-success collapse" role="alert"></div>
+                <div class="col-sm-12">
+                    <div id="successAlert" class="alert alert-success collapse" role="alert"></div>
+                </div>
+                
             </div>
-            <div class="row border border-dark">
-                <div id="player1" class="col-sm border border-dark">
+            <div class="row">
+                <div id="player1" class="col-sm-4 border border-dark">
                     <h1 class="display-3">Player 1</h1>
                     <div id="bpmPlayer1">
                         <span id="p1Bpm">0 bpm</span>
@@ -28,10 +31,10 @@
                         <span id="p1Spo2">0%</span>
                     </div>
                 </div>
-                <div class="col-sm">
+                <div class="col-sm-4">
                     <span id="counter">0</span>
                 </div>
-                <div id="player2" class="col-sm border border-dark">
+                <div id="player2" class="col-sm-4 border border-dark">
                     <h1 class="display-3">Player 2</h1>
                     <div id="bpmPlayer2">
                         <span id="p2Bpm" >0 bpm</span>
@@ -49,8 +52,10 @@
             </div>
             
             <div class="row">
-                <button id="startButton" type="button" value="Start" class="btn btn-success btn-lg btn-block" onclick="startNewGame()">Start Game</button>
-                <button id="stopButton" type="button" value="Stop" class="btn btn-secondary btn-lg btn-block" style="display: none" onclick="stopGame()">Stop Game</button>
+                <div class="col-sm-10 ">
+                    <button id="startButton" type="button" value="Start" class="btn btn-success btn-lg btn-block" onclick="startNewGame()">Start Game</button>
+                    <button id="stopButton" type="button" value="Stop" class="btn btn-secondary btn-lg btn-block" style="display: none" onclick="stopGame()">Stop Game</button>
+                </div>
             </div>
         </div>
 
@@ -58,11 +63,8 @@
             const electron = require('electron');
             const { ipcRenderer } = electron;
             const EasyTimer = require('easytimer.js');
+            const players = ['p1', 'p2'];
             let timer = new EasyTimer();
-
-            $('#successAlert').on("game.finished", () => {
-                $('#successAlert').text("The game is finished!!!");
-            });
 
             function startNewGame() {
                 console.log("Starting a new game....");
@@ -70,20 +72,17 @@
                 $("#stopButton").show();
                 $('#successAlert').hide();
 
-                ipcRenderer.send('start:game', {});
-                startChronometer();
-                startCounter();
-            }
-
-            function startCounter() {
-                $('#counter').counterUp({
-                    delay: 10,
-                    time: 5
+                players.forEach((player) => {
+                    $('#' + player + 'Bpm').text("0 bpm");
+                    $('#' + player + 'Spo2').text("0%");
                 });
+
+                ipcRenderer.send('game:start', {});
+                startChronometer();
             }
 
             function stopGame() {
-                console.log("Stoping the game...");
+                console.log("Stoping the countercountergame...");
                 $('#successAlert').text("The game was interrupted!!!");
                 $('#successAlert').show();
 
@@ -91,7 +90,7 @@
                 $('#stopButton').hide();
 
                 stopChronometer();
-                ipcRenderer.send('stop:game', {});
+                ipcRenderer.send('game:stop', {});
             }
 
             function startChronometer() {
@@ -108,6 +107,18 @@
                 timer.stop();
             }
 
+            ipcRenderer.on('game:over', (event, data) => {
+                 $('#successAlert').fadeIn(2000, () => {
+                    $('#successAlert').text("The game is finished!!!");
+                    $('#successAlert').show();
+                });
+
+                stopChronometer()
+
+                $("#counter").fadeOut(1000, () => {
+                    $(this).text("stopped").fadeIn(1000);
+                });
+            });
             
             ipcRenderer.on('screen:update', (event, data) => {
                 if (data !== undefined && data.length > 0) {
@@ -115,6 +126,14 @@
                         const player = (el.playerID === "1") ? 'p1' : 'p2';
                         $('#'+player+'Bpm').text(el.data.bpm);
                         $('#'+player+'Spo2').text(el.data.spo2);
+                    });
+                }
+            });
+
+            ipcRenderer.on('screen:countdown', (event, data) => {
+                if (data !== undefined) {
+                    $("#counter").fadeOut(1000, () => {
+                        $(this).text(data).fadeIn(1000);
                     });
                 }
             });
