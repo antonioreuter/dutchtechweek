@@ -3,6 +3,8 @@
         <meta charset="utf-8">
         <title>Philips Dutch Tech Week</title>
         <script>window.$ = window.jQuery = require('jquery');</script>
+        <script src="http://cdnjs.cloudflare.com/ajax/libs/waypoints/2.0.3/waypoints.min.js"></script>
+        <script src="jquery.counterup.min.js"></script>
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
             crossorigin="anonymous">
         <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
@@ -17,36 +19,33 @@
                 <div id="successAlert" class="alert alert-success collapse" role="alert"></div>
             </div>
             <div class="row border border-dark">
-                <div class="col-sm border border-dark">
+                <div id="player1" class="col-sm border border-dark">
                     <h1 class="display-3">Player 1</h1>
                     <div id="bpmPlayer1">
-                        <h1>0 bpm</h1>
+                        <span id="p1Bpm">0 bpm</span>
                     </div>
                     <div id="spo2Player1">
-                        <h1>0%</h1>
+                        <span id="p1Spo2">0%</span>
                     </div>
                 </div>
                 <div class="col-sm">
-                    <h5>0</h5>
+                    <span id="counter">0</span>
                 </div>
-                <div class="col-sm border border-dark">
+                <div id="player2" class="col-sm border border-dark">
                     <h1 class="display-3">Player 2</h1>
                     <div id="bpmPlayer2">
-                        <h1>0 bpm</h1>
+                        <span id="p2Bpm" >0 bpm</span>
                     </div>
                     <div id="spo2Player2">
-                        <h1>0%</h1>
+                        <span id="p2Spo2">0%</span>
                     </div>
                 </div>
             </div>
             
-            <div class="row">
-            
+            <div class="row"></div>
                 <div class="mx-auto" style="width: 200px;">
                     <span id="chronometer" style="font-size:2rem;" class="badge badge-pill badge-warning">00:00:00</span>
                 </div>
-            
-            
             </div>
             
             <div class="row">
@@ -55,9 +54,7 @@
             </div>
         </div>
 
-
         <script>
-            
             const electron = require('electron');
             const { ipcRenderer } = electron;
             const EasyTimer = require('easytimer.js');
@@ -72,7 +69,29 @@
                 $("#startButton").hide();
                 $("#stopButton").show();
                 $('#successAlert').hide();
+
+                ipcRenderer.send('start:game', {});
                 startChronometer();
+                startCounter();
+            }
+
+            function startCounter() {
+                $('#counter').counterUp({
+                    delay: 10,
+                    time: 5
+                });
+            }
+
+            function stopGame() {
+                console.log("Stoping the game...");
+                $('#successAlert').text("The game was interrupted!!!");
+                $('#successAlert').show();
+
+                $('#startButton').show();
+                $('#stopButton').hide();
+
+                stopChronometer();
+                ipcRenderer.send('stop:game', {});
             }
 
             function startChronometer() {
@@ -89,20 +108,16 @@
                 timer.stop();
             }
 
-            function stopGame() {
-                console.log("Stoping the game...");
-                $('#successAlert').text("The game was interrupted!!!");
-                $('#successAlert').show();
-
-                $('#startButton').show();
-                $('#stopButton').hide();
-
-                stopChronometer();
-            }
-
+            
+            ipcRenderer.on('screen:update', (event, data) => {
+                if (data !== undefined && data.length > 0) {
+                    data.forEach((el) => {
+                        const player = (el.playerID === "1") ? 'p1' : 'p2';
+                        $('#'+player+'Bpm').text(el.data.bpm);
+                        $('#'+player+'Spo2').text(el.data.spo2);
+                    });
+                }
+            });
         </script>
-
-
-       
     </body>
 </html>

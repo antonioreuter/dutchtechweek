@@ -13,6 +13,7 @@
     "electron": "^1.8.4",
     "jquery": "^3.3.1",
     "moment": "^2.22.0",
+    "node-hue-api": "^2.4.2",
     "request": "^2.85.0"
   }
 }
