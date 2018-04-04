@@ -43,8 +43,8 @@ class Interpreter {
           lightBulbID: this.findLightBulbID(x.playerID),
           color: lightUtils.calculateHueColorNumber(this.getInitialHeartbeat(x.playerID), x.data.bpm),
           data: {
-            bpm: `${x.data.bpm} bpm`,
-            spo2: `${x.data.spo2}%`
+            bpm: `${Math.round(x.data.bpm)}`,
+            spo2: `${Math.round(x.data.spo2)}%`
           }
         }));
         const winners = payload.filter(x => x.color === 0);

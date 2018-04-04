@@ -67,9 +67,9 @@ appEventEmitter.on(CHANGE_DATA_EVENT, (data) => {
 });
 
 appEventEmitter.on(UPDATE_COUNTDOWN_EVENT, (data) => {
-    console.log(`Counting down... ${data}`);
+    console.log(`Counting down... ${JSON.stringify(data)}`);
     if (data !== undefined) {
-        data.count = (data.count !== 0) ? data : 'ready';
+        data.count = (data.count !== 0) ? data.count : 'ready';
 
         mainWindow.webContents.send('screen:countdown', data.count);
 
