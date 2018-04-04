@@ -1,4 +1,5 @@
-const { appEventEmitter } = require('./appEventEmitter');
+const { appEventEmitter, CHANGE_DATA_EVENT, CHANGE_DATA_SCREEN_EVENT, CHANGE_DATA_LAMPS_EVENT } = require('./appEventEmitter');
+const config = require('./config.json');
 
 class Interpreter {
   constructor() {
@@ -6,7 +7,29 @@ class Interpreter {
   }
 
   addRecords(records) {
-    
+    const oldSize = this.data.size;
+    records.forEach((x) => {
+      this.data.set(x.id, x);
+    });
+    const currentSize = this.data.size;
+    if (oldSize !== currentSize) {
+      const playerPayload = this.computePlayers();
+      const screenPayload = playerPayload.map(x => ({
+        playerID: x.playerID,
+        data: {
+          bpm: `${x.data.bpm} bpm`,
+          spo2: `${x.data.spo2}%`
+        }
+      }));
+      const lightPayload = playerPayload.map(x => ({
+        playerID: x.playerID,
+        lightBulbID: '',
+        data: x.data
+      }));
+      appEventEmitter.emit(CHANGE_DATA_EVENT, Array.from(this.data.values()));
+      appEventEmitter.emit(CHANGE_DATA_SCREEN_EVENT, screenPayload);
+      appEventEmitter.emit(CHANGE_DATA_LAMPS_EVENT, lightPayload);
+    }
   }
 
   computePlayers() {
@@ -14,10 +37,17 @@ class Interpreter {
     const playerData = new Map();
     const result = [];
     items.forEach((x) => {
-      if (playerData.has(x.playerData))
-        playerData.set(item.playerID)
+      if (!playerData.has(x.playerID)) {
+        playerData.set(x.playerID, x);
+      } else {
+        const currentLatest = playerData.get(x.playerID);
+        if (currentLatest.timestamp < x.timestamp) {
+          playerData.set(x.playerID, x);
+        }
+      }
+
     });
-    return result;
+    return Array.from(playerData.values());
   }
 }
 

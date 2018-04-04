@@ -2,6 +2,7 @@ const request = require('request');
 const moment = require('moment');
 const Service = require('./service');
 const getToken = require('../iam').getToken;
+const interpreter = require('../interpreter');
 
 class TDRService extends Service {
   constructor(config) {
@@ -15,15 +16,14 @@ class TDRService extends Service {
       url: `${this.config.url}/DataItem`,
       qs: { 
         organization: this.config.organization,
-        _count: '100',
         dataType: this.config.datatype
       },
       headers: { 
-        'Cache-Control': 'no-cache',
-        Authorization: `Bearer ${token}`,
-        'Content-Type': '*',
-        'Api-Version': '3' 
-      } 
+        'cache-control': 'no-cache',
+        authorization: `Bearer ${token}`,
+        'content-type': '*',
+        'api-version': '3' 
+      }
     };
 
     return new Promise((resolve, reject) => {
@@ -35,8 +35,7 @@ class TDRService extends Service {
         if (response.statusCode !== 200) {
           return reject(new Error(`TDR error, status code: ${response.statusCode}`));
         }
-      
-        console.log(body);
+
         return resolve(body);
       });
     });
@@ -46,11 +45,18 @@ class TDRService extends Service {
     return getToken(this.config.iamUrl,this.config.oAuthClient, this.config.oAuthClientPassword,
       this.config.username, this.config.password)
       .then((token) => {
-        console.log('Token: ', token);
-        return this.queryTDR(token)
+        // console.log('Token: ', token);
+        return this.queryTDR(token);
       })
       .then((response) => {
-        console.log(response);
+        const resources = response.entry.map(x => x.resource);
+        const transformedResources = resources.map(x => ({
+          id: x.id,
+          playerID: x.device.value,
+          timestamp: moment(x.creationTimestamp).unix(),
+          data: x.data.data
+        }));
+        interpreter.addRecords(transformedResources);
         return Promise.resolve();
       })
       .catch((error) => {
