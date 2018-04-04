@@ -5,7 +5,7 @@ const url = require('url');
 const path = require('path');
 const control = require('./control');
 const lampHue = require('./lampHueMock');
-const { appEventEmitter, START_QUERY_DATA_EVENT, STOP_QUERY_DATA_EVENT } = require('./appEventEmitter');
+const { appEventEmitter, START_QUERY_DATA_EVENT, GAME_STOPPED, CHANGE_DATA_EVENT, UPDATE_COUNTDOWN_EVENT, GAME_OVER } = require('./appEventEmitter');
 
 
 const { app, BrowserWindow, Menu, ipcMain } = electron;
@@ -40,17 +40,17 @@ ipcMain.on('game:stop', (event, val) => {
 });
 
 
-appEventEmitter.on('game:over', (data) => {
+appEventEmitter.on(GAME_OVER, (data) => {
     console.log('Game over');
-
-    mainWindow.webContents.send('game:over', { winner: 'player 1'});
+    const winnerID = data[0].playerID;
+    mainWindow.webContents.send(GAME_OVER, { winner: winnerID });
 
     lampHue.resetLamps();
     lampHue.colorLoop(1);
 });
 
 
-appEventEmitter.on('update:data', (data) => {
+appEventEmitter.on(CHANGE_DATA_EVENT, (data) => {
     console.log(`Updating the screen with the latest data: ${JSON.stringify(data)}`);
 
     if (data !== undefined) {
@@ -62,13 +62,13 @@ appEventEmitter.on('update:data', (data) => {
     }
 });
 
-appEventEmitter.on('countdown', (data) => {
+appEventEmitter.on(UPDATE_COUNTDOWN_EVENT, (data) => {
     console.log(`Counting down... ${data}`);
     if (data !== undefined) {
         data.count = (data.count !== 0) ? data : 'ready';
 
         mainWindow.webContents.send('screen:countdown', data.count);
 
-        lampHue.emitSignalLampSignal(data.bright);
+        lampHue.emitSignalLampSignal(data.brightness);
     }
 });

@@ -1,9 +1,16 @@
+const moment = require('moment');
+
 class Service {
   constructor(config) {
     this.config = Object.assign({}, config);
+    this.lastQueryTimestamp = moment();    
   }
 
-  query(startTimeMS, endTimeMS) {
+  resetLastQueryTimestamp(timestamp = moment()) {
+    this.lastQueryTimestamp = timestamp;
+  }
+
+  query() {
     return Promise.reject('Please define the query function');
   }
 }

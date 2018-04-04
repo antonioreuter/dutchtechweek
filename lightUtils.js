@@ -1,7 +1,7 @@
 const HueColorValueGreen = 25500;
 const IncreasePercentage = 40;
 
-calculateHueColorNumber = (initialHeartbeat, currentHeartbeat, increasePercentage = IncreasePercentage) => {
+const calculateHueColorNumber = (initialHeartbeat, currentHeartbeat, increasePercentage = IncreasePercentage) => {
   // console.log("Initial heartbeat: " + initialHeartbeat);
   // console.log("Current heartbeat: " + currentHeartbeat);
   // console.log("Increase Percentage: " + increasePercentage);
@@ -14,8 +14,13 @@ calculateHueColorNumber = (initialHeartbeat, currentHeartbeat, increasePercentag
 
   result = Math.round(((1 - ((normalizedHeartbeat - initialHeartbeat) / (maxHeartbeat - initialHeartbeat))) * HueColorValueGreen));
   return result;
-}
+};
+
+const calculateBrightness = (durationLeftPercent) => {
+  return 40;
+};
 
 module.exports = {
-  calculateHueColorNumber
+  calculateHueColorNumber,
+  calculateBrightness
 };

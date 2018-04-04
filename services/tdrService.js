@@ -7,7 +7,6 @@ const interpreter = require('../interpreter');
 class TDRService extends Service {
   constructor(config) {
     super(config);
-    this.lastQueryTimestamp = moment();
   }
 
   queryTDR(token) {
@@ -44,7 +43,7 @@ class TDRService extends Service {
     });
   }
 
-  query(startTimeMS, endTimeMS) {
+  query() {
     return getToken(this.config.iamUrl,this.config.oAuthClient, this.config.oAuthClientPassword,
       this.config.username, this.config.password)
       .then((token) => {
@@ -56,11 +55,11 @@ class TDRService extends Service {
         const transformedResources = resources.map(x => ({
           id: x.id,
           playerID: x.device.value,
-          timestamp: moment(x.creationTimestamp).unix(),
+          timestamp: moment(x.creationTimestamp).valueOf(),
           data: x.data.data
         }));
         interpreter.addRecords(transformedResources);
-        console.log(transformedResources);
+        // console.log(transformedResources);
         return Promise.resolve();
       })
       .catch((error) => {
