@@ -1,6 +1,6 @@
 const moment = require('moment');
 const config = require('./config.json');
-const createService = require('./services/service').createService;
+const createService = require('./services/createService');
 const { appEventEmitter, START_QUERY_DATA_EVENT, STOP_QUERY_DATA_EVENT } = require('./appEventEmitter');
 
 class Control {
@@ -10,7 +10,7 @@ class Control {
     this.isRunning = false;
     this.intervalID = null;
     this.intervalTimeout = config.queryIntervalMS;
-    this.dataServices = this.config.services.map(serviceConfig => createService(serviceConfig));
+    this.dataServices = config.services.map(serviceConfig => createService(serviceConfig));
     this.publishedMessageCount = 0;
     this.handledMessageCount = 0;
   }
@@ -23,7 +23,7 @@ class Control {
     this.isRunning = true;
     appEventEmitter.emit(START_QUERY_DATA_EVENT);
     setInterval(() => {
-      tick();
+      this.tick();
     }, this.intervalTimeout);
   }
 
@@ -34,7 +34,7 @@ class Control {
     const endTimestamp = moment.unix();
     this.dataServices.forEach((x) => {
       this.publishedMessageCount++;
-      x.queryData(this.queryTimestamp, endTimestamp)
+      x.query(this.queryTimestamp, endTimestamp)
         .then(() => {
           this.handledMessageCount++;
         })
@@ -64,3 +64,7 @@ class Control {
     this.waitForQueries();
   }
 }
+
+const control = new Control();
+
+module.exports = control;

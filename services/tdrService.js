@@ -1,6 +1,6 @@
 const request = require('request');
 const moment = require('moment');
-const Service = require('./service').Service;
+const Service = require('./service');
 const getToken = require('../iam').getToken;
 
 class TDRService extends Service {
@@ -31,6 +31,10 @@ class TDRService extends Service {
         if (error) {
           return reject(error);
         }
+
+        if (response.statusCode !== 200) {
+          return reject(new Error(`TDR error, status code: ${response.statusCode}`));
+        }
       
         console.log(body);
         return resolve(body);
@@ -43,10 +47,14 @@ class TDRService extends Service {
       this.config.username, this.config.password)
       .then((token) => {
         console.log('Token: ', token);
-        return Promise.reject();
+        return this.queryTDR(token)
+      })
+      .then((response) => {
+        console.log(response);
+        return Promise.resolve();
       })
       .catch((error) => {
-        console.error(error);
+        console.error('Error', error);
         return Promise.resolve([]);
       });
   }

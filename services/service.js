@@ -1,5 +1,3 @@
-const TDRService = require('./tdrService');
-
 class Service {
   constructor(config) {
     this.config = Object.assign({}, config);
@@ -10,14 +8,4 @@ class Service {
   }
 }
 
-const createService = (serviceConfig) => {
-  if (serviceConfig.type === 'tdr') {
-    return new TDRService(serviceConfig);
-  }
-  throw Error("Unknown service type");
-};
-
-module.exports = {
-  Service,
-  createService,
-}
+module.exports = Service;

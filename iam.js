@@ -1,3 +1,5 @@
+const request = require('request');
+
 const getToken = (iamURL, oAuthClientUsername, oAuthClientPassword, username, password) => {
   const authHeader = Buffer.from(`${oAuthClientUsername}:${oAuthClientPassword}`).toString('base64');
   const options = {
