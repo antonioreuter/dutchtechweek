@@ -21,6 +21,14 @@ class Control {
     this.publishedMessageCount = 0;
     this.handledMessageCount = 0;
     this.isRunning = true;
+    this.stopCountdown();
+  }
+
+  startCountdown() {
+
+  }
+
+  stopCountdown() {
     appEventEmitter.emit(START_QUERY_DATA_EVENT);
     setInterval(() => {
       this.tick();
