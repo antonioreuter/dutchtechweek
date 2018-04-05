@@ -12,10 +12,10 @@ class Control {
     this.dataServices = config.services.map(serviceConfig => createService(serviceConfig));
   }
 
-  resetRequestCounter() {
+  resetRequestCounter(subtractionS = 0) {
     this.requestCount = 0;
     this.handledRequestCount = 0;
-    const timestamp = moment();
+    const timestamp = moment().subtract(subtractionS, 'seconds');
     this.dataServices.forEach(x => x.resetLastQueryTimestamp(timestamp));
   }
 
@@ -43,7 +43,7 @@ class Control {
   
   startCountdown() {
     appEventEmitter.emit(START_COUNTDOWN_EVENT);
-    this.resetRequestCounter();    
+    this.resetRequestCounter(5);    
     this.countdownUpdate(moment().valueOf(), config.countdownS + 1);
   }
 

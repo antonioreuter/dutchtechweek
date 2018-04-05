@@ -69,9 +69,9 @@ class Interpreter {
 
   findLightBulbID(playerID) {
     for (let i = 0; i < config.players.length; i++) {
-      let item = config.players[i];
-      if (item.playerID === playerID) {
-        return item.lightBulbID;
+      let player = config.players[i];
+      if (player.id === playerID) {
+        return player.lightBulbID;
       }
     }
     return -1;

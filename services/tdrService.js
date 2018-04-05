@@ -3,10 +3,27 @@ const moment = require('moment');
 const Service = require('./service');
 const getToken = require('../iam').getToken;
 const interpreter = require('../interpreter');
+const applicationConfig = require('../config.json');
 
 class TDRService extends Service {
   constructor(config) {
     super(config);
+    this.tokenCache = null;
+  }
+
+  getCachedToken() {
+    if (this.tokenCache && (moment().unix() - this.tokenCache.creation < applicationConfig.tokenCachenMin * 60)) {
+      return Promise.resolve(this.tokenCache.token);
+    }
+    return getToken(this.config.iamUrl,this.config.oAuthClient, this.config.oAuthClientPassword,
+      this.config.username, this.config.password)
+      .then((accessToken) => {
+        this.tokenCache = {
+          token: accessToken,
+          creation: moment().unix()
+        }
+        return accessToken;
+      });
   }
 
   queryTDR(token) {
@@ -44,10 +61,8 @@ class TDRService extends Service {
   }
 
   query() {
-    return getToken(this.config.iamUrl,this.config.oAuthClient, this.config.oAuthClientPassword,
-      this.config.username, this.config.password)
+    return this.getCachedToken()
       .then((token) => {
-        // console.log('Token: ', token);
         return this.queryTDR(token);
       })
       .then((response) => {
