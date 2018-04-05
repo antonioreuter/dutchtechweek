@@ -42,9 +42,9 @@ ipcMain.on('game:stop', (event, val) => {
 
 
 appEventEmitter.on(GAME_OVER, (data) => {
-    console.log('Game over');
-    const winnerID = data.playerID;
-    mainWindow.webContents.send(GAME_OVER, { winner: winnerID });
+    console.log(`Game over, player ${data.playerID} won the competition.`);
+    const winnerID = data.playerName;
+    mainWindow.webContents.send('game:over', { winner: winnerID });
 
     lampHue.resetLamps();
     lampHue.colorLoop(data.lightBulbID);

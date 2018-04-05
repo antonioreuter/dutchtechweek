@@ -39,6 +39,7 @@ class Interpreter {
         const playerPayload = this.getLatestPlayerData();
         const payload = playerPayload.map(x => ({
           playerID: x.playerID,
+          playerName: this.findPlayerName(x.playerID),
           lightBulbID: this.findLightBulbID(x.playerID),
           color: lightUtils.calculateHueColorNumber(this.getInitialHeartbeat(x.playerID), x.data.bpm),
           data: {
@@ -74,6 +75,16 @@ class Interpreter {
       }
     }
     return -1;
+  }
+
+  findPlayerName(playerID) {
+    for (let i = 0; i < config.players.length; i++) {
+      let player = config.players[i];
+      if (player.id === playerID) {
+        return player.name;
+      }
+    }
+    return 'Unknown player';
   }
 
   computeInitialHeartbeat() {
