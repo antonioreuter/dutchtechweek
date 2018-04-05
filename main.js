@@ -18,7 +18,7 @@ app.commandLine.appendSwitch('host-rules', 'MAP * 127.0.0.1')
 
 app.on('ready', () => {
     console.log('Starting the application...');
-    mainWindow = new BrowserWindow({ width: 1000, height: 800, backgroundColor: '#CCCCCC' });
+    mainWindow = new BrowserWindow({ width: 1500, height: 800, backgroundColor: '#CCCCCC' });
     mainWindow.loadURL(`file://${__dirname}/mainWindow.html`);
 
     
@@ -62,7 +62,9 @@ appEventEmitter.on(CHANGE_DATA_EVENT, (data) => {
         mainWindow.webContents.send('screen:update', data);
 
         data.forEach(element => {
-            lampHue.emitPlayerLampSignal(element.lightBulbID, element.color);
+            if (element.lightBulbID !== -1) {
+                lampHue.emitPlayerLampSignal(element.lightBulbID, element.color);
+            }
         });
     }
 });
