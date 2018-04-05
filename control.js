@@ -56,7 +56,7 @@ class Control {
     if (count !== lastCount) {
       appEventEmitter.emit(UPDATE_COUNTDOWN_EVENT, {
         count,
-        brightness: lightUtils.calculateBrightness(count / config.countdownS)
+        brightness: lightUtils.calculateBrightness(count)
       });
     }
     if (durationMS > config.countdownS * 1000.0) {
