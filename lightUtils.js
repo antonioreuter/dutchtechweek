@@ -16,8 +16,8 @@ const calculateHueColorNumber = (initialHeartbeat, currentHeartbeat, increasePer
   return result;
 };
 
-const calculateBrightness = (durationLeftPercent) => {
-  return 40;
+const calculateBrightness = (count) => {
+  return count % 2 == 0 ? 40 : 80;
 };
 
 module.exports = {
