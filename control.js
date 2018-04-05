@@ -2,7 +2,7 @@ const moment = require('moment');
 const config = require('./config.json');
 const createService = require('./services/createService');
 const lightUtils = require('./lightUtils');
-const { appEventEmitter, START_QUERY_DATA_EVENT, GAME_STOPPED, START_COUNTDOWN_EVENT, STOP_COUNTDOWN_EVENT, UPDATE_COUNTDOWN_EVENT } = require('./appEventEmitter');
+const { appEventEmitter, START_QUERY_DATA_EVENT, GAME_STOPPED, START_COUNTDOWN_EVENT, STOP_COUNTDOWN_EVENT, UPDATE_COUNTDOWN_EVENT, WINNER_FOUND_EVENT, GAME_OVER } = require('./appEventEmitter');
 
 class Control {
   constructor() {
@@ -10,6 +10,9 @@ class Control {
     this.intervalID = null;
     this.timeoutID = null;
     this.dataServices = config.services.map(serviceConfig => createService(serviceConfig));
+    appEventEmitter.on(WINNER_FOUND_EVENT, (data) => {
+      this.stop(GAME_OVER, data);
+    });
   }
 
   resetRequestCounter(subtractionS = 0) {

@@ -7,7 +7,6 @@ class Service {
   }
 
   resetLastQueryTimestamp(timestamp = moment()) {
-    console.log('Hey hey: ', timestamp.toISOString());
     this.lastQueryTimestamp = timestamp;
   }
 
