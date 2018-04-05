@@ -6,19 +6,21 @@ const path = require('path');
 const control = require('./control');
 const lampHue = require('./lampHue');
 const lightUtils = require('./lightUtils');
-const { appEventEmitter, START_QUERY_DATA_EVENT, GAME_STOPPED, CHANGE_DATA_EVENT, UPDATE_COUNTDOWN_EVENT, GAME_OVER } = require('./appEventEmitter');
+const {
+    appEventEmitter, START_QUERY_DATA_EVENT, GAME_STOPPED, CHANGE_DATA_EVENT, UPDATE_COUNTDOWN_EVENT, GAME_OVER, INIT_BMP_EVENT 
+} = require('./appEventEmitter');
 
 
 const { app, BrowserWindow, Menu, ipcMain } = electron;
 
 let mainWindow;
 
-app.commandLine.appendSwitch('remote-debugging-port', '8600')
+app.commandLine.appendSwitch('remote-debugging-port', '8500')
 app.commandLine.appendSwitch('host-rules', 'MAP * 127.0.0.1')
 
 app.on('ready', () => {
     console.log('Starting the application...');
-    mainWindow = new BrowserWindow({ width: 1000, height: 800, backgroundColor: '#CCCCCC' });
+    mainWindow = new BrowserWindow({ width: 1500, height: 800, backgroundColor: '#CCCCCC' });
     mainWindow.loadURL(`file://${__dirname}/mainWindow.html`);
 
     
@@ -42,9 +44,9 @@ ipcMain.on('game:stop', (event, val) => {
 
 
 appEventEmitter.on(GAME_OVER, (data) => {
-    console.log('Game over');
-    const winnerID = data.playerID;
-    mainWindow.webContents.send(GAME_OVER, { winner: winnerID });
+    console.log(`Game over, player ${data.playerID} won the competition.`);
+    const winnerID = data.playerName;
+    mainWindow.webContents.send('game:over', { winner: winnerID });
 
     lampHue.resetLamps();
     lampHue.colorLoop(data.lightBulbID);
@@ -62,15 +64,21 @@ appEventEmitter.on(CHANGE_DATA_EVENT, (data) => {
         mainWindow.webContents.send('screen:update', data);
 
         data.forEach(element => {
-            lampHue.emitPlayerLampSignal(element.lightBulbID, element.color);
+            if (element.lightBulbID !== -1) {
+                lampHue.emitPlayerLampSignal(element.lightBulbID, element.color);
+            }
         });
     }
+});
+
+appEventEmitter.on(INIT_BMP_EVENT, (data) => {
+    console.log('Init data event', data);
 });
 
 appEventEmitter.on(UPDATE_COUNTDOWN_EVENT, (data) => {
     console.log(`Counting down... ${JSON.stringify(data)}`);
     if (data !== undefined) {
-        data.count = (data.count !== 0) ? data.count : 'ready';
+        data.count = (data.count !== 0) ? data.count : 'Run Forrest, run!';
 
         mainWindow.webContents.send('screen:countdown', data.count);
 
