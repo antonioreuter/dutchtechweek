@@ -4,7 +4,7 @@ const electron = require('electron');
 const url = require('url');
 const path = require('path');
 const control = require('./control');
-const lampHue = require('./lampHueMock');
+const lampHue = require('./lampHue');
 const { appEventEmitter, START_QUERY_DATA_EVENT, GAME_STOPPED, CHANGE_DATA_EVENT, UPDATE_COUNTDOWN_EVENT, GAME_OVER } = require('./appEventEmitter');
 
 
@@ -42,15 +42,15 @@ ipcMain.on('game:stop', (event, val) => {
 
 appEventEmitter.on(GAME_OVER, (data) => {
     console.log('Game over');
-    const winnerID = data[0].playerID;
+    const winnerID = data.playerID;
     mainWindow.webContents.send(GAME_OVER, { winner: winnerID });
 
     lampHue.resetLamps();
-    lampHue.colorLoop(1);
+    lampHue.colorLoop(data.lightBulbID);
 });
 
 appEventEmitter.on(GAME_STOPPED, () => {
-    // TODO
+    console.log('Game stopped for real this time.');
 });
 
 
