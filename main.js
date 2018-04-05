@@ -15,7 +15,7 @@ const { app, BrowserWindow, Menu, ipcMain } = electron;
 
 let mainWindow;
 
-app.commandLine.appendSwitch('remote-debugging-port', '8600')
+app.commandLine.appendSwitch('remote-debugging-port', '8500')
 app.commandLine.appendSwitch('host-rules', 'MAP * 127.0.0.1')
 
 app.on('ready', () => {
@@ -78,7 +78,7 @@ appEventEmitter.on(INIT_BMP_EVENT, (data) => {
 appEventEmitter.on(UPDATE_COUNTDOWN_EVENT, (data) => {
     console.log(`Counting down... ${JSON.stringify(data)}`);
     if (data !== undefined) {
-        data.count = (data.count !== 0) ? data.count : 'ready';
+        data.count = (data.count !== 0) ? data.count : 'Run Forrest, run!';
 
         mainWindow.webContents.send('screen:countdown', data.count);
 
