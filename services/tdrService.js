@@ -43,16 +43,19 @@ class TDRService extends Service {
         'api-version': '3' 
       }
     };
-    this.lastQueryTimestamp = moment();
-
+    const currentTimestamp = moment();
+    
     return new Promise((resolve, reject) => {
       request(options, (error, response, body) => {
         if (error) {
           return reject(error);
         }
-
+        
         if (response.statusCode !== 200) {
           return reject(new Error(`TDR error, status code: ${response.statusCode}`));
+        }
+        if (body.entry.length > 0) {
+          this.lastQueryTimestamp = currentTimestamp;
         }
 
         return resolve(body);

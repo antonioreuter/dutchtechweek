@@ -47,6 +47,11 @@ class LampHue {
         this.sendSignal(lamp, state);
     }
 
+    turnOn(lamp) {
+        const state = lightState.create().on().bri(100);
+        this.sendSignal(lamp, state);
+    }
+
     resetLamps() {
         for (let i = 1; i < 4; i++) {
             this.resetLamp(i);

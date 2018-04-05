@@ -35,7 +35,7 @@
                     </div>
                 </div>
                 <div class="col-sm-2 counter">
-                    <span id="counter" class="align-middle" style="font-size: 3em; color:darkred;"></span>
+                    <span id="counter" class="align-middle" style="font-size: 2em; color:darkred;"></span>
                 </div>
                 <div id="player2" class="col-sm-4 border border-dark">
                     <h1 class="display-3">Player 2</h1>
@@ -139,9 +139,6 @@
                 console.log(`SCREEN: Counting down ${data}`);
                 if (data !== undefined) {
                     $("#counter").text(data);
-                    // $("#counter").fadeOut(500, () => {
-                    //     $(this).text(10).fadeIn(500);
-                    // });
                 }
             });
         </script>
