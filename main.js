@@ -6,7 +6,9 @@ const path = require('path');
 const control = require('./control');
 const lampHue = require('./lampHue');
 const lightUtils = require('./lightUtils');
-const { appEventEmitter, START_QUERY_DATA_EVENT, GAME_STOPPED, CHANGE_DATA_EVENT, UPDATE_COUNTDOWN_EVENT, GAME_OVER } = require('./appEventEmitter');
+const {
+    appEventEmitter, START_QUERY_DATA_EVENT, GAME_STOPPED, CHANGE_DATA_EVENT, UPDATE_COUNTDOWN_EVENT, GAME_OVER, INIT_BMP_EVENT 
+} = require('./appEventEmitter');
 
 
 const { app, BrowserWindow, Menu, ipcMain } = electron;
@@ -67,6 +69,10 @@ appEventEmitter.on(CHANGE_DATA_EVENT, (data) => {
             }
         });
     }
+});
+
+appEventEmitter.on(INIT_BMP_EVENT, (data) => {
+    console.log('Init data event', data);
 });
 
 appEventEmitter.on(UPDATE_COUNTDOWN_EVENT, (data) => {
