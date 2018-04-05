@@ -27,3 +27,26 @@ body {
     align-items: center;
     justify-content: center;
 }
+
+.badge-warning {
+    background-color: #005a8b;
+    color: #b3c8e6;
+}
+
+.btn-success {
+    background-color: #005a8b;
+    color: #b3c8e6;  
+    border: none;
+}
+
+.btn-secondary{
+    background-color: #888888;
+    color: #b3c8e6;   
+    border: none;
+}
+
+.alert-success{
+    background-color: #005a8b;
+    color: #b3c8e6;  
+    border: none;
+}
