@@ -1,5 +1,11 @@
+const config = require('./config.json');
+
 const HueColorValueGreen = 25500;
-const IncreasePercentage = 40;
+const IncreasePercentage = config.increasePercentage;
+const SIGNAL_LAMP = 2;
+const PLAYER1_LAMP = config.players[0].lightBulbID;
+const PLAYER2_LAMP = config.players[1].lightBulbID;
+
 
 const calculateHueColorNumber = (initialHeartbeat, currentHeartbeat, increasePercentage = IncreasePercentage) => {
   // console.log("Initial heartbeat: " + initialHeartbeat);
@@ -17,10 +23,13 @@ const calculateHueColorNumber = (initialHeartbeat, currentHeartbeat, increasePer
 };
 
 const calculateBrightness = (count) => {
-  return count % 2 == 0 ? 40 : 80;
+  return count % 2 == 0 ? 0 : 100;
 };
 
 module.exports = {
   calculateHueColorNumber,
-  calculateBrightness
+  calculateBrightness,
+  SIGNAL_LAMP,
+  PLAYER1_LAMP,
+  PLAYER2_LAMP
 };

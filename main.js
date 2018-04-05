@@ -5,6 +5,7 @@ const url = require('url');
 const path = require('path');
 const control = require('./control');
 const lampHue = require('./lampHue');
+const lightUtils = require('./lightUtils');
 const { appEventEmitter, START_QUERY_DATA_EVENT, GAME_STOPPED, CHANGE_DATA_EVENT, UPDATE_COUNTDOWN_EVENT, GAME_OVER } = require('./appEventEmitter');
 
 
@@ -12,7 +13,7 @@ const { app, BrowserWindow, Menu, ipcMain } = electron;
 
 let mainWindow;
 
-app.commandLine.appendSwitch('remote-debugging-port', '8315')
+app.commandLine.appendSwitch('remote-debugging-port', '8600')
 app.commandLine.appendSwitch('host-rules', 'MAP * 127.0.0.1')
 
 app.on('ready', () => {
@@ -73,6 +74,14 @@ appEventEmitter.on(UPDATE_COUNTDOWN_EVENT, (data) => {
 
         mainWindow.webContents.send('screen:countdown', data.count);
 
-        lampHue.emitSignalLampSignal(data.brightness);
+        if (data.count > 0) {
+            lampHue.emitSignalLampSignal(data.brightness);
+        } else {
+            lampHue.turnOn(lightUtils.SIGNAL_LAMP);
+        }
     }
+});
+
+appEventEmitter.on(START_QUERY_DATA_EVENT, () => {
+    console.log(`Start query`);
 });
