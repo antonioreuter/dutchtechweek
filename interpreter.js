@@ -1,7 +1,6 @@
-const { appEventEmitter, CHANGE_DATA_EVENT, START_QUERY_DATA_EVENT, GAME_STOPPED, GAME_OVER, STOP_COUNTDOWN_EVENT, START_COUNTDOWN_EVENT, INIT_BMP_EVENT } 
+const { appEventEmitter, CHANGE_DATA_EVENT, START_QUERY_DATA_EVENT, GAME_STOPPED, GAME_OVER, STOP_COUNTDOWN_EVENT, START_COUNTDOWN_EVENT, INIT_BMP_EVENT, WINNER_FOUND_EVENT } 
   = require('./appEventEmitter');
 const lightUtils = require('./lightUtils');
-const control = require('./control');
 const config = require('./config.json');
 
 class Interpreter {
@@ -50,7 +49,7 @@ class Interpreter {
         const winners = payload.filter(x => x.color === 0);
         appEventEmitter.emit(CHANGE_DATA_EVENT, payload);
         if (winners.length > 0) {
-          control.stop(GAME_OVER, winners[0]);
+          appEventEmitter.emit(WINNER_FOUND_EVENT, winners[0]);
         }
       }
     }
