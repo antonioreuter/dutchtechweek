@@ -63,7 +63,7 @@ class Interpreter {
   }
 
   getInitialHeartbeat(playerID) {
-    return this.initialHeartbeat.has(playerID) ? this.initialHeartbeat.get(playerID).averageBPM : 0;
+    return this.initialHeartbeat.has(playerID) ? this.initialHeartbeat.get(playerID).averageBPM : 1;
   }
 
   findLightBulbID(playerID) {
