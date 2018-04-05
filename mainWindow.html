@@ -92,14 +92,12 @@
 
             function stopGame() {
                 console.log("Stoping the countercountergame...");
-                $('#successAlert').text("The game was interrupted!!!");
-                $('#successAlert').show();
-
                 $('#startButton').show();
                 $('#stopButton').hide();
 
                 stopChronometer();
                 ipcRenderer.send('game:stop', {});
+                $("#counter").text("stopped");
             }
 
             function startChronometer() {
@@ -124,9 +122,7 @@
 
                 stopChronometer()
 
-                $("#counter").fadeOut(1000, () => {
-                    $(this).text("stopped").fadeIn(1000);
-                });
+                $("#counter").text("finished");
             });
             
             ipcRenderer.on('screen:update', (event, data) => {
@@ -140,10 +136,12 @@
             });
 
             ipcRenderer.on('screen:countdown', (event, data) => {
+                console.log(`SCREEN: Counting down ${data}`);
                 if (data !== undefined) {
-                    $("#counter").fadeOut(1000, () => {
-                        $(this).text(data).fadeIn(1000);
-                    });
+                    $("#counter").text(data);
+                    // $("#counter").fadeOut(500, () => {
+                    //     $(this).text(10).fadeIn(500);
+                    // });
                 }
             });
         </script>
