@@ -50,7 +50,7 @@ class Interpreter {
         const winners = payload.filter(x => x.color === 0);
         appEventEmitter.emit(CHANGE_DATA_EVENT, payload);
         if (winners.length > 0) {
-          control.stop(GAME_OVER, winners);
+          control.stop(GAME_OVER, winners[0]);
         }
       }
     }
