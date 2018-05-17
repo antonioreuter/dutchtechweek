@@ -29,7 +29,7 @@ class LampHue {
 
     emitSignalLampSignal(signalLampBrightness) {
         const state = lightState.create().on().bri(signalLampBrightness);
-        this.sendSignal(config.signalLampNumber, state);
+        this.sendSignal(config.genericLightBulbID, state);
     }
 
     emitPlayerLampSignal(player, color) {
