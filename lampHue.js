@@ -1,8 +1,8 @@
 'use strict';
 
-const bridgeUsername = "JrzPZjkxV8DitLMIZ4PVWjv2h2KGFvYbKvPjOQBY";
-
+const config = require('./config.json');
 const hue = require("node-hue-api");
+
 const HueApi = hue.HueApi;
 const lightState = hue.lightState;
 
@@ -23,17 +23,17 @@ class LampHue {
     constructor() {
         var self = this;
         hue.nupnpSearch().then(extractBridgeIpAddress).then((bridgeIPAddress) => {
-            self.bridgeApi = new HueApi(bridgeIPAddress, bridgeUsername);
+            self.bridgeApi = new HueApi(bridgeIPAddress, config.bridgeUsername);
         }).done();
     }
 
     emitSignalLampSignal(signalLampBrightness) {
         const state = lightState.create().on().bri(signalLampBrightness);
-        this.sendSignal(2, state);
+        this.sendSignal(config.signalLampNumber, state);
     }
 
     emitPlayerLampSignal(player, color) {
-        const state = lightState.create().on().hue(color).sat(255).bri(30);
+        const state = lightState.create().on().hue(color).sat(255).bri(100);
         this.sendSignal(player, state);
     }
 

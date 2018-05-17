@@ -99,6 +99,7 @@
             console.log("Stoping the countercountergame...");
             $('#startButton').show();
             $('#stopButton').hide();
+            $('#successAlert').hide();
 
             stopChronometer();
             ipcRenderer.send('game:stop', {});
