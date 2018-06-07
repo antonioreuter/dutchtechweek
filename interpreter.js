@@ -36,7 +36,7 @@ class Interpreter {
     if (!Array.isArray(records)) {
       return [];
     }
-    
+
     const items = records.filter((x) => {
       return x.data.bpm > HEARTBEAT_THRESHOLD_MIN && x.data.bpm < HEARTBEAT_THRESHOLD_MAX;
     });
@@ -57,20 +57,22 @@ class Interpreter {
     });
     const currentSize = this.data.size;
     if (oldSize !== currentSize) {
-      const playerPayload = this.getLatestPlayerData();
-      const payload = playerPayload.map(x => ({
-        playerID: x.playerID,
-        playerName: this.findPlayerName(x.playerID),
-        lightBulbID: this.findLightBulbID(x.playerID),
-        color: lightUtils.calculateHueColorNumber(this.getInitialHeartbeat(x.playerID), x.data.bpm),
-        data: {
-          bpm: `${Math.round(x.data.bpm)}`
+      if (this.isQueryingData) {
+        const playerPayload = this.getLatestPlayerData();
+        const payload = playerPayload.map(x => ({
+          playerID: x.playerID,
+          playerName: this.findPlayerName(x.playerID),
+          lightBulbID: this.findLightBulbID(x.playerID),
+          color: lightUtils.calculateHueColorNumber(this.getInitialHeartbeat(x.playerID), x.data.bpm),
+          data: {
+            bpm: `${Math.round(x.data.bpm)}`
+          }
+        }));
+        const winners = payload.filter(x => x.color === 0);
+        appEventEmitter.emit(CHANGE_DATA_EVENT, payload);
+        if (winners.length > 0) {
+          appEventEmitter.emit(WINNER_FOUND_EVENT, winners[0]);
         }
-      }));
-      const winners = payload.filter(x => x.color === 0);
-      appEventEmitter.emit(CHANGE_DATA_EVENT, payload);
-      if (winners.length > 0) {
-        appEventEmitter.emit(WINNER_FOUND_EVENT, winners[0]);
       }
     }
   }

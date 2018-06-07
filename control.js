@@ -51,7 +51,7 @@ class Control {
     this.measureInitBPM(moment().valueOf(), config.countdownS + 1);
   }
 
-  measureInitBPM(startTime, lastCount) {
+  measureInitBPM(startTime) {
     if (!this.isRunning) {
       return;
     }
@@ -68,7 +68,7 @@ class Control {
       .then(() => {
         if (this.isRunning) {
           this.timeoutID = setTimeout(() => {
-            this.measureInitBPM(startTime, count);
+            this.measureInitBPM(startTime);
           }, config.countdownIntervalMS);
         }
       })
