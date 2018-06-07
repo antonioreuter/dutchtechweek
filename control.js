@@ -10,6 +10,7 @@ class Control {
     this.intervalID = null;
     this.timeoutID = null;
     this.dataServices = config.services.map(serviceConfig => createService(serviceConfig));
+    this.countDownRequests = [];
     appEventEmitter.on(WINNER_FOUND_EVENT, (data) => {
       this.stop(GAME_OVER, data);
     });

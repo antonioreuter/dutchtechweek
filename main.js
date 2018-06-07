@@ -7,7 +7,7 @@ const control = require('./control');
 const lampHue = require('./lampHue');
 const lightUtils = require('./lightUtils');
 const {
-    appEventEmitter, START_QUERY_DATA_EVENT, GAME_STOPPED, CHANGE_DATA_EVENT, UPDATE_COUNTDOWN_EVENT, GAME_OVER, INIT_BMP_EVENT 
+    appEventEmitter, START_QUERY_DATA_EVENT, GAME_STOPPED, CHANGE_DATA_EVENT, UPDATE_COUNTDOWN_EVENT, UPDATE_COUNTDOWN_EVENT2, GAME_OVER, INIT_BMP_EVENT 
 } = require('./appEventEmitter');
 
 
@@ -33,6 +33,10 @@ ipcMain.on('game:start', (event, val) => {
     console.log('Sending message to START the game...');
     lampHue.resetLamps();
     control.start();
+});
+
+ipcMain.on('game:startCountdown', (event, val) => {
+    startCountdown(5);
 });
 
 ipcMain.on('game:stop', (event, val) => {
@@ -74,8 +78,7 @@ appEventEmitter.on(INIT_BMP_EVENT, (data) => {
     console.log('Init data event', data);
 });
 
-appEventEmitter.on(UPDATE_COUNTDOWN_EVENT, (data) => {
-    console.log(`Counting down... ${JSON.stringify(data)}`);
+appEventEmitter.on(UPDATE_COUNTDOWN_EVENT2, (data) => {
     if (data !== undefined) {
         if (data.count < 1) 
             data.msg = 'Go';
@@ -95,3 +98,16 @@ appEventEmitter.on(UPDATE_COUNTDOWN_EVENT, (data) => {
 appEventEmitter.on(START_QUERY_DATA_EVENT, () => {
     console.log(`Start query`);
 });
+
+const startCountdown = function theLoop(i) {
+    setTimeout(function () {
+        appEventEmitter.emit(UPDATE_COUNTDOWN_EVENT2, {
+            count: i,
+            brightness: lightUtils.calculateBrightness(i)
+        });
+        --i;
+        if (i >= -1) {          // If i > 0, keep going
+            theLoop(i);       // Call the loop again, and pass it the current value of i
+        }
+    }, 1000);
+};

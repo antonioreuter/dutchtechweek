@@ -92,6 +92,7 @@
             });
 
             ipcRenderer.send('game:start', {});
+            ipcRenderer.send('game:startCountdown', {});
         }
 
         function stopGame() {
@@ -116,7 +117,10 @@
 
         function stopChronometer() {
             console.log('stoping the chronometer...');
+            timer.reset();
             timer.stop();
+            $('#chronometer').html("00:00:00");
+            
         }
 
         ipcRenderer.on('game:over', (event, data) => {
@@ -139,12 +143,12 @@
 
         ipcRenderer.on('screen:countdown', (event, data) => {
             console.log(`SCREEN: Counting down ${JSON.stringify(data)}`);
-            if (data !== undefined) {
-                if (data.count == 0) {
-                     $("#counter").text('');
-                    startChronometer();
-                } else {
+            if (data) {
+                if (data.count > -1) { 
                     $("#counter").text(data.msg);
+                } else {
+                    $("#counter").text('');
+                    startChronometer();
                 }    
             }
         });
