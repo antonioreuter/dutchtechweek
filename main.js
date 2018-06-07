@@ -23,7 +23,6 @@ app.on('ready', () => {
     mainWindow = new BrowserWindow({ width: 1500, height: 800, backgroundColor: '#CCCCCC' });
     mainWindow.loadURL(`file://${__dirname}/mainWindow.html`);
 
-    
     mainWindow.on('closed', () => {
         console.log('quit! bye, bye...');
         app.quit();
@@ -78,9 +77,12 @@ appEventEmitter.on(INIT_BMP_EVENT, (data) => {
 appEventEmitter.on(UPDATE_COUNTDOWN_EVENT, (data) => {
     console.log(`Counting down... ${JSON.stringify(data)}`);
     if (data !== undefined) {
-        data.count = (data.count !== 0) ? data.count : 'Run Forrest, run!';
+        if (data.count < 1) 
+            data.msg = 'Go';
+        else
+            data.msg = data.count;
 
-        mainWindow.webContents.send('screen:countdown', data.count);
+        mainWindow.webContents.send('screen:countdown', data);
 
         if (data.count > 0) {
             lampHue.emitSignalLampSignal(data.brightness);

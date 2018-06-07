@@ -38,7 +38,7 @@
                 </div>
             </div>
             <div class="col-sm-2 counter">
-                <span id="counter" class="align-middle" style="font-size: 2em; color:#b3c8e6;"></span>
+                <span id="counter" class="align-middle" style="font-size: 20em; color:#f50a0a;"></span>
             </div>
             <div id="player2" class="col-sm-4" style="text-align: center">
                 <h1 class="display-3">
@@ -92,7 +92,6 @@
             });
 
             ipcRenderer.send('game:start', {});
-            startChronometer();
         }
 
         function stopGame() {
@@ -103,7 +102,7 @@
 
             stopChronometer();
             ipcRenderer.send('game:stop', {});
-            $("#counter").text("stopped");
+            $("#counter").text("");
         }
 
         function startChronometer() {
@@ -125,7 +124,7 @@
             $('#successAlert').show();
             stopChronometer()
 
-            $("#counter").text("finished");
+            $("#counter").text("");
         });
 
         ipcRenderer.on('screen:update', (event, data) => {
@@ -139,9 +138,14 @@
         });
 
         ipcRenderer.on('screen:countdown', (event, data) => {
-            console.log(`SCREEN: Counting down ${data}`);
+            console.log(`SCREEN: Counting down ${JSON.stringify(data)}`);
             if (data !== undefined) {
-                $("#counter").text(data);
+                if (data.count == 0) {
+                     $("#counter").text('');
+                    startChronometer();
+                } else {
+                    $("#counter").text(data.msg);
+                }    
             }
         });
     </script>
