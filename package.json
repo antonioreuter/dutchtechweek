@@ -9,6 +9,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "bootstrap": "^4.1.1",
     "easytimer.js": "^2.2.1",
     "electron": "^1.8.4",
     "jquery": "^3.3.1",

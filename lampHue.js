@@ -12,11 +12,24 @@ const displayResult = function (result) {
     console.log(JSON.stringify(result, null, 2));
 };
 
-const extractBridgeIpAddress = function(bridge) {
-    console.log("Hue Bridges Found: " + JSON.stringify(bridge));
-    bridgeIPAddress = bridge[0].ipaddress;
+const extractBridgeIpAddress = function(bridges) {
+    console.log("Hue Bridges Found: " + JSON.stringify(bridges));
+    bridgeIPAddress = getBrigde(bridges).ipaddress;
     console.log("Bridge: " + bridgeIPAddress);
     return bridgeIPAddress;
+}
+
+const getBrigde = function(bridges) {
+    let bridge;
+    bridges.forEach(b => {
+        if (b.ipaddress.startsWith('192.')) {
+            bridge = b;
+        };
+    });
+
+    if (!bridge) bridge = bridges[0];
+
+    return bridge;
 }
 
 class LampHue {
