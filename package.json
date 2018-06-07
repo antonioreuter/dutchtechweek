@@ -15,7 +15,7 @@
     "jquery": "^3.3.1",
     "moment": "^2.22.0",
     "node-hue-api": "^2.4.2",
-    "request": "^2.85.0",
-    "thread-sleep": "^2.1.0"
+    "outliers": "0.0.3",
+    "request": "^2.85.0"
   }
 }

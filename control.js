@@ -2,7 +2,7 @@ const moment = require('moment');
 const config = require('./config.json');
 const createService = require('./services/createService');
 const lightUtils = require('./lightUtils');
-const { appEventEmitter, START_QUERY_DATA_EVENT, GAME_STOPPED, START_COUNTDOWN_EVENT, STOP_COUNTDOWN_EVENT, UPDATE_COUNTDOWN_EVENT, WINNER_FOUND_EVENT, GAME_OVER } = require('./appEventEmitter');
+const { appEventEmitter, START_QUERY_DATA_EVENT, GAME_STOPPED, START_MEASURING_INIT_BPM, STOP_MEASURING_INIT_BPM, WINNER_FOUND_EVENT, GAME_OVER } = require('./appEventEmitter');
 
 class Control {
   constructor() {
@@ -41,30 +41,23 @@ class Control {
     this.isRunning = true;
     this.clearTimeouts();
     setTimeout(() => {
-      this.startCountdown();
+      this.startMeasuringInitBPM();
     }, config.countdownDelayMS);
   }
   
-  startCountdown() {
-    appEventEmitter.emit(START_COUNTDOWN_EVENT);
+  startMeasuringInitBPM() {
+    appEventEmitter.emit(START_MEASURING_INIT_BPM);
     this.resetRequestCounter(5);    
-    this.countdownUpdate(moment().valueOf(), config.countdownS + 1);
+    this.measureInitBPM(moment().valueOf(), config.countdownS + 1);
   }
 
-  countdownUpdate(startTime, lastCount) {
+  measureInitBPM(startTime, lastCount) {
     if (!this.isRunning) {
       return;
     }
     const durationMS = moment().valueOf() - startTime;
-    const count = Math.max(0, config.countdownS - Math.floor(durationMS / 1000.0));
-    if (count !== lastCount) {
-      appEventEmitter.emit(UPDATE_COUNTDOWN_EVENT, {
-        count,
-        brightness: lightUtils.calculateBrightness(count)
-      });
-    }
     if (durationMS > config.countdownS * 1000.0) {
-      this.stopCountdown();
+      this.stopMeasuringInitBPM();
       return;
     }
     const requestPromises = [];
@@ -75,21 +68,21 @@ class Control {
       .then(() => {
         if (this.isRunning) {
           this.timeoutID = setTimeout(() => {
-            this.countdownUpdate(startTime, count);
+            this.measureInitBPM(startTime, count);
           }, config.countdownIntervalMS);
         }
       })
       .catch(err => {
-        console.error('Huge bullshit has happened');
-        this.stopCountdown();
+        console.error('Honestly, no idea what happened');
+        this.stopMeasuringInitBPM();
       });
   }
 
-  stopCountdown() {
+  stopMeasuringInitBPM() {
     if (!this.isRunning) {
       return;
     }
-    appEventEmitter.emit(STOP_COUNTDOWN_EVENT);
+    appEventEmitter.emit(STOP_MEASURING_INIT_BPM);
     setTimeout(() => {
       this.startQuery();
     }, config.countdownDelayMS);
